@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KK's Bachelor Party - Rate the Groom!</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* Floating particles */
+    .particles {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 6px; height: 6px;
+      background: gold;
+      border-radius: 50%;
+      animation: float linear infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-top: 20px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #ffd700, #ffaa00);
+      color: #1a1a2e;
+      padding: 6px 20px;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: linear-gradient(to right, #ffd700, #fff, #ffd700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .header p {
+      color: #b8b8d0;
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+
+    /* Voting Section */
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ffd700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .qualities-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .quality-chip {
+      position: relative;
+      background: rgba(255, 255, 255, 0.06);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .quality-chip:hover {
+      background: rgba(255, 215, 0, 0.08);
+      border-color: rgba(255, 215, 0, 0.3);
+    }
+
+    .quality-chip.selected {
+      background: rgba(255, 215, 0, 0.15);
+      border-color: #ffd700;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+    }
+
+    .chip-emoji {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .chip-label {
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .chip-check {
+      position: absolute;
+      top: 8px; right: 10px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: #ffd700;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: #1a1a2e;
+      font-weight: 800;
+    }
+
+    .quality-chip.selected .chip-check {
+      display: flex;
+    }
+
+    /* Counter */
+    .counter {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      color: #b8b8d0;
+    }
+
+    .counter span {
+      color: #ffd700;
+      font-weight: 700;
+    }
+
+    /* Custom input */
+    .custom-section {
+      margin-bottom: 28px;
+    }
+
+    .custom-input {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      color: #fff;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.25s;
+    }
+
+    .custom-input::placeholder { color: #666; }
+    .custom-input:focus { border-color: rgba(255, 215, 0, 0.5); }
+
+    /* Submit button */
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #ffd700, #ffaa00);
+      color: #1a1a2e;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.25s;
+      letter-spacing: 0.5px;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Results */
+    .results-section {
+      display: none;
+      margin-top: 10px;
+    }
+
+    .results-section.visible { display: block; }
+
+    .thank-you {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .thank-you h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: #ffd700;
+      margin-bottom: 8px;
+    }
+
+    .thank-you p {
+      color: #b8b8d0;
+    }
+
+    .chart-container {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 20px;
+      padding: 24px 16px;
+      margin-bottom: 20px;
+    }
+
+    .voter-count {
+      text-align: center;
+      color: #b8b8d0;
+      font-size: 0.85rem;
+      margin-top: 16px;
+    }
+
+    .voter-count span { color: #ffd700; font-weight: 700; }
+
+    .view-results-link {
+      display: block;
+      text-align: center;
+      color: #ffd700;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-top: 20px;
+      background: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Confetti burst */
+    @keyframes confettiFall {
+      0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    .confetti-piece {
+      position: fixed;
+      width: 10px; height: 10px;
+      z-index: 999;
+      animation: confettiFall 3s ease-out forwards;
+    }
+  </style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="container">
+  <!-- VOTING VIEW -->
+  <div id="voteView">
+    <div class="header">
+      <div class="badge">Bachelor Party 2026</div>
+      <h1>What's KK<br>Really Like?</h1>
+      <p>Pick the 3 qualities that scream KK</p>
+    </div>
+
+    <div class="section-title">Choose 3 Qualities</div>
+
+    <div class="qualities-grid" id="qualitiesGrid">
+      <!-- Chips injected by JS -->
+    </div>
+
+    <div class="counter">
+      <span id="selectedCount">0</span> / 3 selected
+    </div>
+
+    <div class="custom-section">
+      <div class="section-title">Got your own word for KK?</div>
+      <input type="text" class="custom-input" id="customInput" placeholder="Type your adjective here..." maxlength="30">
+    </div>
+
+    <button class="submit-btn" id="submitBtn" disabled>Lock In My Votes</button>
+
+    <button class="view-results-link" id="peekResults">Just here to see results?</button>
+  </div>
+
+  <!-- RESULTS VIEW -->
+  <div class="results-section" id="resultsView">
+    <div class="thank-you" id="thankYouMsg">
+      <h2>Cheers!</h2>
+      <p>Your votes are in. Here's what everyone thinks of KK...</p>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="pieChart"></canvas>
+    </div>
+
+    <div class="voter-count">
+      <span id="totalVoters">0</span> people have voted so far
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- Particles ---
+  const particlesEl = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (4 + Math.random() * 6) + 's';
+    p.style.animationDelay = (Math.random() * 8) + 's';
+    p.style.width = p.style.height = (3 + Math.random() * 5) + 'px';
+    p.style.background = ['#ffd700', '#ff6b6b', '#48dbfb', '#ff9ff3', '#fff'][Math.floor(Math.random() * 5)];
+    particlesEl.appendChild(p);
+  }
+
+  // --- Qualities ---
+  const qualities = [
+    { label: 'Meticulous', emoji: '🔍' },
+    { label: 'Cute', emoji: '🥰' },
+    { label: 'Handsome', emoji: '😎' },
+    { label: 'Annoying', emoji: '😤' },
+    { label: 'Scary', emoji: '👻' },
+    { label: 'Drunkard', emoji: '🍺' },
+    { label: 'Fun', emoji: '🎉' },
+    { label: 'Nice Person', emoji: '💛' },
+    { label: 'Loyal', emoji: '🤝' },
+    { label: 'Witty', emoji: '🧠' },
+    { label: 'Romantic', emoji: '💕' },
+    { label: 'Foodie', emoji: '🍕' },
+    { label: 'Chill', emoji: '😌' },
+    { label: 'Drama King', emoji: '👑' },
+  ];
+
+  const grid = document.getElementById('qualitiesGrid');
+  const selected = new Set();
+
+  qualities.forEach(q => {
+    const chip = document.createElement('div');
+    chip.className = 'quality-chip';
+    chip.dataset.label = q.label;
+    chip.innerHTML = `
+      <span class="chip-emoji">${q.emoji}</span>
+      <span class="chip-label">${q.label}</span>
+      <span class="chip-check">✓</span>
+    `;
+    chip.addEventListener('click', () => toggleChip(chip, q.label));
+    grid.appendChild(chip);
+  });
+
+  function toggleChip(chip, label) {
+    if (selected.has(label)) {
+      selected.delete(label);
+      chip.classList.remove('selected');
+    } else if (selected.size < 3) {
+      selected.add(label);
+      chip.classList.add('selected');
+    }
+    document.getElementById('selectedCount').textContent = selected.size;
+    document.getElementById('submitBtn').disabled = selected.size !== 3;
+  }
+
+  // --- Submit ---
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const custom = document.getElementById('customInput').value.trim();
+
+    try {
+      const res = await fetch('/api/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ selected: [...selected], custom })
+      });
+      const data = await res.json();
+      if (data.success) {
+        burstConfetti();
+        setTimeout(() => showResults(true), 600);
+      }
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Lock In My Votes';
+      alert('Something went wrong, try again!');
+    }
+  });
+
+  // --- Peek results ---
+  document.getElementById('peekResults').addEventListener('click', () => showResults(false));
+
+  // --- Show Results ---
+  async function showResults(voted) {
+    const res = await fetch('/api/results');
+    const data = await res.json();
+
+    document.getElementById('voteView').style.display = 'none';
+    document.getElementById('resultsView').classList.add('visible');
+
+    if (!voted) {
+      document.getElementById('thankYouMsg').innerHTML = `
+        <h2>Live Results</h2>
+        <p>Here's what everyone thinks of KK so far...</p>
+      `;
+    }
+
+    document.getElementById('totalVoters').textContent = data.totalVoters;
+
+    // Sort and take top entries
+    const sorted = Object.entries(data.votes).sort((a, b) => b[1] - a[1]);
+    const labels = sorted.map(e => e[0]);
+    const values = sorted.map(e => e[1]);
+
+    const colors = [
+      '#ffd700', '#ff6b6b', '#48dbfb', '#ff9ff3', '#54a0ff',
+      '#5f27cd', '#01a3a4', '#f368e0', '#ff9f43', '#10ac84',
+      '#ee5a24', '#0abde3', '#c44569', '#f78fb3', '#3dc1d3',
+      '#e77f67', '#778beb', '#cf6a87', '#63cdda', '#ea8685'
+    ];
+
+    if (window.pieChartInstance) window.pieChartInstance.destroy();
+
+    const ctx = document.getElementById('pieChart').getContext('2d');
+    window.pieChartInstance = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          backgroundColor: colors.slice(0, labels.length),
+          borderColor: 'rgba(15, 12, 41, 0.8)',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#ccc',
+              padding: 14,
+              font: { size: 13, family: 'Inter' },
+              usePointStyle: true,
+              pointStyleWidth: 12
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                const pct = ((ctx.parsed / total) * 100).toFixed(1);
+                return ` ${ctx.label}: ${ctx.parsed} votes (${pct}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // --- Confetti ---
+  function burstConfetti() {
+    const confettiColors = ['#ffd700', '#ff6b6b', '#48dbfb', '#ff9ff3', '#54a0ff', '#fff'];
+    for (let i = 0; i < 60; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.top = '-10px';
+      piece.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      piece.style.width = (5 + Math.random() * 10) + 'px';
+      piece.style.height = (5 + Math.random() * 10) + 'px';
+      piece.style.animationDelay = (Math.random() * 0.8) + 's';
+      document.body.appendChild(piece);
+      setTimeout(() => piece.remove(), 4000);
+    }
+  }
+</script>
+
+</body>
+</html>
