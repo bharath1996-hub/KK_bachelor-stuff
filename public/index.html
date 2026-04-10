@@ -13,9 +13,9 @@
     body {
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
-      background: linear-gradient(135deg, rgba(15,12,41,0.92), rgba(48,43,99,0.92), rgba(36,36,62,0.92)),
+      background: linear-gradient(135deg, rgba(15,12,41,0.7), rgba(48,43,99,0.7), rgba(36,36,62,0.7)),
                   url('/images/kiss.png') repeat;
-      background-size: auto, 120px 120px;
+      background-size: auto, 100px 100px;
       color: #fff;
       overflow-x: hidden;
     }
@@ -274,57 +274,153 @@
       font-family: 'Inter', sans-serif;
     }
 
-    /* Photo gallery */
-    .gallery {
-      margin-bottom: 30px;
-    }
-
-    .gallery-scroll {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      padding: 8px 0 14px;
-      scrollbar-width: none;
-    }
-
-    .gallery-scroll::-webkit-scrollbar { display: none; }
-
-    .gallery-item {
-      flex: 0 0 70%;
-      scroll-snap-align: center;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 2px solid rgba(255, 215, 0, 0.2);
+    /* KK Hero Section */
+    .kk-hero {
+      text-align: center;
       position: relative;
-      background: rgba(0,0,0,0.3);
+      margin-bottom: 10px;
+      padding-top: 10px;
     }
 
-    .gallery-item img {
-      width: 100%;
-      height: 280px;
+    .kk-photo-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .kk-photo {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
       object-fit: cover;
-      display: block;
+      border: 4px solid #ffd700;
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+      animation: pulseGlow 2s ease-in-out infinite;
     }
 
-    .gallery-caption {
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.7); }
+    }
+
+    .speech-bubble {
       position: absolute;
-      bottom: 0;
-      left: 0; right: 0;
-      padding: 8px 12px;
-      background: linear-gradient(transparent, rgba(0,0,0,0.8));
-      font-size: 0.8rem;
-      color: #ffd700;
-      font-weight: 600;
-      text-align: center;
+      top: -10px;
+      right: -140px;
+      background: #fff;
+      color: #1a1a2e;
+      padding: 10px 16px;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      max-width: 180px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      animation: bubbleBounce 2s ease-in-out infinite;
     }
 
-    .gallery-hint {
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: 12px;
+      left: -10px;
+      border: 6px solid transparent;
+      border-right-color: #fff;
+    }
+
+    @keyframes bubbleBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* Typing animation */
+    .typewriter {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid #ff6b6b;
+      animation: typing 3s steps(32) 1s forwards, blink 0.7s step-end infinite;
+      width: 0;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    /* Floating lips */
+    .floating-lip {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.15;
+      animation: floatLip linear infinite;
+    }
+
+    @keyframes floatLip {
+      0% { transform: translateY(110vh) rotate(0deg) scale(0.5); opacity: 0; }
+      10% { opacity: 0.15; }
+      90% { opacity: 0.15; }
+      100% { transform: translateY(-10vh) rotate(360deg) scale(1.2); opacity: 0; }
+    }
+
+    /* Naughty Popup */
+    .naughty-popup {
+      position: fixed;
+      z-index: 1000;
+      background: linear-gradient(135deg, #1a1a2e, #302b63);
+      border: 3px solid #ff6b6b;
+      border-radius: 20px;
+      padding: 20px;
       text-align: center;
-      font-size: 0.75rem;
-      color: #666;
-      margin-top: 4px;
+      max-width: 300px;
+      box-shadow: 0 10px 40px rgba(255, 107, 107, 0.4);
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes popIn {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    .naughty-popup img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #ff6b6b;
+      margin-bottom: 12px;
+    }
+
+    .naughty-popup p {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ff6b6b;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .naughty-popup .close-popup {
+      background: #ff6b6b;
+      color: #fff;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 999;
     }
 
     /* Confetti burst */
@@ -348,6 +444,15 @@
 <div class="container">
   <!-- VOTING VIEW -->
   <div id="voteView">
+    <div class="kk-hero">
+      <div class="kk-photo-wrapper">
+        <img src="/images/kk1.jpg" class="kk-photo" alt="KK">
+        <div class="speech-bubble">
+          <span class="typewriter">Welcome to my Bachelor's Party!</span>
+        </div>
+      </div>
+    </div>
+
     <div class="header">
       <div class="badge">Bachelor Party 2026</div>
       <h1>What's KK<br>Really Like?</h1>
@@ -594,6 +699,60 @@
       }
     });
   }
+
+  // --- Floating lips ---
+  function spawnLip() {
+    const lip = document.createElement('img');
+    lip.src = '/images/kiss.png';
+    lip.className = 'floating-lip';
+    lip.style.left = Math.random() * 100 + 'vw';
+    lip.style.width = (40 + Math.random() * 60) + 'px';
+    lip.style.animationDuration = (6 + Math.random() * 8) + 's';
+    lip.style.animationDelay = (Math.random() * 2) + 's';
+    document.body.appendChild(lip);
+    setTimeout(() => lip.remove(), 16000);
+  }
+  // Spawn lips periodically
+  setInterval(spawnLip, 1500);
+  for (let i = 0; i < 5; i++) setTimeout(spawnLip, i * 400);
+
+  // --- Naughty Popups ---
+  const naughtyMessages = [
+    { img: '/images/kk2.jpg', text: 'KK is waiting for you in the room... 😏🔥' },
+    { img: '/images/kk1.jpg', text: 'Last night of freedom! KK says no regrets 🍾' },
+    { img: '/images/kk2.jpg', text: 'KK wants to know... are you single? 😈' },
+    { img: '/images/girl.jpg', text: 'KK\'s dreams be like... 💭👀' },
+    { img: '/images/kk1.jpg', text: 'This man is off the market FOREVER 💍😭' },
+    { img: '/images/kk2.jpg', text: 'KK after 3 drinks: "I love everyone" 🍺❤️' },
+  ];
+
+  let popupIndex = 0;
+  function showNaughtyPopup() {
+    const msg = naughtyMessages[popupIndex % naughtyMessages.length];
+    popupIndex++;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'popup-overlay';
+
+    const popup = document.createElement('div');
+    popup.className = 'naughty-popup';
+    popup.innerHTML = `
+      <img src="${msg.img}" alt="KK">
+      <p>${msg.text}</p>
+      <button class="close-popup">Haha OK! 😂</button>
+    `;
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(popup);
+
+    const close = () => { overlay.remove(); popup.remove(); };
+    popup.querySelector('.close-popup').addEventListener('click', close);
+    overlay.addEventListener('click', close);
+  }
+
+  // Show first popup after 3 seconds, then every 25 seconds
+  setTimeout(showNaughtyPopup, 3000);
+  setInterval(showNaughtyPopup, 25000);
 
   // --- Confetti ---
   function burstConfetti() {
