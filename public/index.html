@@ -303,51 +303,43 @@
     }
 
     .speech-bubble {
-      position: absolute;
-      top: -10px;
-      right: -140px;
+      position: relative;
+      display: inline-block;
       background: #fff;
       color: #1a1a2e;
-      padding: 10px 16px;
+      padding: 12px 18px;
       border-radius: 16px;
-      font-size: 0.85rem;
+      font-size: 1rem;
       font-weight: 700;
-      max-width: 180px;
+      max-width: 300px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       animation: bubbleBounce 2s ease-in-out infinite;
+      margin-top: 16px;
     }
 
-    .speech-bubble::after {
+    .speech-bubble::before {
       content: '';
       position: absolute;
-      bottom: 12px;
-      left: -10px;
+      top: -10px;
+      left: 50%;
+      margin-left: -6px;
       border: 6px solid transparent;
-      border-right-color: #fff;
+      border-bottom-color: #fff;
     }
 
     @keyframes bubbleBounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
+      50% { transform: translateY(-6px); }
     }
 
-    /* Typing animation */
-    .typewriter {
-      display: inline-block;
-      overflow: hidden;
-      white-space: nowrap;
-      border-right: 2px solid #ff6b6b;
-      animation: typing 3s steps(32) 1s forwards, blink 0.7s step-end infinite;
-      width: 0;
+    .speech-text {
+      display: inline;
+      animation: fadeInText 1.5s ease-out 0.5s both;
     }
 
-    @keyframes typing {
-      from { width: 0; }
-      to { width: 100%; }
-    }
-
-    @keyframes blink {
-      50% { border-color: transparent; }
+    @keyframes fadeInText {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
     }
 
     /* Floating lips */
@@ -447,9 +439,9 @@
     <div class="kk-hero">
       <div class="kk-photo-wrapper">
         <img src="/images/kk1.jpg" class="kk-photo" alt="KK">
-        <div class="speech-bubble">
-          <span class="typewriter">Welcome to my Bachelor's Party!</span>
-        </div>
+      </div>
+      <div class="speech-bubble">
+        <span class="speech-text">Welcome to my Bachelor's Party! 🎉🍾</span>
       </div>
     </div>
 
@@ -700,21 +692,30 @@
     });
   }
 
-  // --- Floating lips ---
-  function spawnLip() {
-    const lip = document.createElement('img');
-    lip.src = '/images/kiss.png';
-    lip.className = 'floating-lip';
-    lip.style.left = Math.random() * 100 + 'vw';
-    lip.style.width = (40 + Math.random() * 60) + 'px';
-    lip.style.animationDuration = (6 + Math.random() * 8) + 's';
-    lip.style.animationDelay = (Math.random() * 2) + 's';
-    document.body.appendChild(lip);
-    setTimeout(() => lip.remove(), 16000);
+  // --- Floating images (lips, kiss2, girl) ---
+  const floatingImages = [
+    '/images/kiss.png',
+    '/images/kiss.png',
+    '/images/kiss.png',
+    '/images/kiss2.avif',
+    '/images/girl.jpg',
+  ];
+
+  function spawnFloater() {
+    const img = document.createElement('img');
+    img.src = floatingImages[Math.floor(Math.random() * floatingImages.length)];
+    img.className = 'floating-lip';
+    img.style.left = Math.random() * 100 + 'vw';
+    img.style.width = (40 + Math.random() * 70) + 'px';
+    img.style.borderRadius = '50%';
+    img.style.animationDuration = (6 + Math.random() * 8) + 's';
+    img.style.animationDelay = (Math.random() * 2) + 's';
+    document.body.appendChild(img);
+    setTimeout(() => img.remove(), 16000);
   }
-  // Spawn lips periodically
-  setInterval(spawnLip, 1500);
-  for (let i = 0; i < 5; i++) setTimeout(spawnLip, i * 400);
+  // Spawn floaters periodically
+  setInterval(spawnFloater, 1200);
+  for (let i = 0; i < 6; i++) setTimeout(spawnFloater, i * 350);
 
   // --- Naughty Popups ---
   const naughtyMessages = [
@@ -750,9 +751,9 @@
     overlay.addEventListener('click', close);
   }
 
-  // Show first popup after 3 seconds, then every 25 seconds
+  // Show first popup after 3 seconds, then every 6 seconds
   setTimeout(showNaughtyPopup, 3000);
-  setInterval(showNaughtyPopup, 25000);
+  setInterval(showNaughtyPopup, 6000);
 
   // --- Confetti ---
   function burstConfetti() {
